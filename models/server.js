@@ -1,10 +1,13 @@
 const express = require('express')
-var cors = require('cors')
-var bodyParser = require('body-parser')
+const cors = require('cors');
+const body = require('body-parser');
+const bodyParser = require('body-parser');
+
 
 class Server {
     constructor() {
         this.app = express()
+        this.app.port = process.env.PORT
         this.usuariosPath = "/"
         this.middlewares()
         this.routes();
@@ -27,6 +30,7 @@ class Server {
     }
     listen() {
         this.app.listen(8080, () => {
+            console.log('server online', this.app.port)
             console.log('servidor corriendo en el puerto 8080')
 
         })
