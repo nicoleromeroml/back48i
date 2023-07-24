@@ -1,0 +1,53 @@
+Con npm init -y creamos el archivo package json
+
+Con backend empezamos a ejecutar el lado del servidor
+Para ver los mensajes en consola necesitamos usar node:
+node index.js
+
+Para ver todo lo que vayamos a usar en el backend hay que utilizar node
+Podemos saber que version de node tenemos poniendo en consola:
+node --version
+
+Hay que levantar el servidor de node manualmente. Para que esto no sea tan difícil utilizamos express
+Buscamos en google express npm y lo instalamos por consola:
+npm install express.
+
+Si nos fijamos en package.json ya tenemos instalada la dependencia de express y aparece la carpeta de node_modules
+
+Volvemos a la pagina de express y copiamos el codigo para levantar el servidor:
+
+const express = require('express')
+const app = express()
+
+app.get('/', function (req, res) {
+  res.send('Hello World')
+})
+
+app.listen(3000)
+
+
+ya no importamos de la manera en la que lo hacemos en react.
+Importamos creando constantes:
+const express = require('express') 
+
+De nuevo, corremos node index.js
+No va a pasar nada, pero si no sale un mensaje de error quiere decir que está funcionando
+Como lo sabemos? vamos al navegador y ponemos:
+localhost:3000/
+
+Siempre que actualizamos el servidor tenemos que bajarlo con ctrl c e inicializarlo de nuevo
+
+Asi como lo vemos al codigo funciona pero no es mantenible porque vamos a seguir agregando cosas 
+Lo mejor que podemos hacer es trabajar en modular, quiere decir que vamos a agregar una carpeta para ir agregando todos los modelos 
+Creamos la carpeta models y adentro server.js
+
+El archivo server va a ser para levantar el servidor.
+Llevamos parte del codigo de index
+
+Que son los middlewares? son funciones que existen entre las peticiones que hace el frontend
+o el usuario y la respuesta que envia el servidor, es decir reciben y responden
+Nos puede servir por ej para validar datos que envia el usuario
+Vamos a usar middlewares para 
+-CORS
+-Leer lo que envia el usuario por el cuerpo de la peticion
+-Definir la carpeta publica
