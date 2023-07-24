@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors');
 const body = require('body-parser');
 const bodyParser = require('body-parser');
+const {dbConection} = require('../database/config')
 
 
 class Server {
@@ -11,6 +12,10 @@ class Server {
         this.usuariosPath = "/"
         this.middlewares()
         this.routes();
+        this.conectarDB
+    }
+    async conectarDB(){
+        await dbConection();
     }
     middlewares() {
 
@@ -31,7 +36,7 @@ class Server {
     listen() {
         this.app.listen(8080, () => {
             console.log('server online', this.app.port)
-            console.log('servidor corriendo en el puerto 8080')
+            // console.log('servidor corriendo en el puerto 8080')
 
         })
     }
