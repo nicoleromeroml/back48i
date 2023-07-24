@@ -18,6 +18,8 @@
 //!Exportamos la clase server
 const Server = require('./models/server');
 
+require('dotenv').config();
+
 //!Para crear la instancia de la clase
 const server = new Server(); //tiene las variables, funcion de ruteo, listen, etc
 

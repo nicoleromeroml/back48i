@@ -8,10 +8,11 @@ class Server{
     constructor(){
         //en vez de hacer la constante con app la traemos con el constructor
         this.app = express();
+        this.port = process.env.PORT;
         this.usersPath = '/api/usuarios';
         //si al instanciar la clase queremos que se levante la funcion routes tenemos que llamarla desde el constructor
-        this.routes();
         this.middlewares();
+        this.routes();
     }
     middlewares(){
 
@@ -41,8 +42,9 @@ class Server{
     //para escuchar el puerto creamos otra funcion
     listen(){
         //le ponemos una segunda variable, una funcion que nos devuelva un mensaje en consola
-        this.app.listen(8080, () => {
-            console.log('Server online port 8080');
+        this.app.listen(this.port, () => {
+            console.log('Server online port:', this.port);
+
         })
     }
 }
