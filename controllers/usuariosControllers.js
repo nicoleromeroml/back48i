@@ -30,7 +30,7 @@ const usuariosPost = async (req = request, res = respose) => {
 
     res.json({
         mensaje: 'POST de usuarios',
-        body,
+        body
 
     })
 }
@@ -44,6 +44,7 @@ const usuariosDelete = (req = request, res = respose) => {
 const usuariosUpdate = () => {
 
 }
+
 module.exports = {
     usuariosGet,
     usuariosPost,
