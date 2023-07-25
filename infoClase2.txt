@@ -1,0 +1,148 @@
+ CONTROLLERS/USUARIOSCONTROLLERS
+
+Cómo verifico si un correo está en la base de datos?
+
+Vamos a utilizar métodos que tiene mongoose.
+Mongoose lo que hace es conectarse a la base de datos por lo que cada vez que lo exportamos podemos llamar a 
+los métodos que tiene a través de su modelo, modelo de usuario.
+
+Vamos a utilizar un método parecido al find.
+Creamos una variable y hacemos una consulta a la base de datos, como no sabemos cuándo va a volver,
+qué tenemos que utilizar? El await.
+Entonces agregamos el async en usuarios post.
+
+Utilizamos el método findOne(), este método filtra un query que le pasamos, hace una consulta a la base de datos.
+Va a recorrer por todo el array de usuarios buscando el correo, si no existe no nos va a devolver un valor
+
+--------------------
+
+1. Como hacemos para encriptar una contraseña
+
+Vamos a utilizar una librería que se llama bcrypt.js
+https://github.com/dcodeIO/bcrypt.js/blob/master/README.md
+
+- Hay que instalarlo como siempre:
+    npm install bcryptjs
+
+- Una vez instalada tenemos que importarla en controlador de usario, 
+ya que necesitamos usarla en la petición post
+
+- Vamos a la documentación de bcrypt.js(Usage Sync)
+    a. Primero tenemos que crear una variable salt: la función de esta variable es ver las veces que vamos
+    a correr el algoritmo de encriptación sobre esa contraseña que le vamos a pasar.
+    Cada vez que pasamos la contraseña por ese algoritmo de encriptación es más seguro.
+    Por defecto este método genSaltSync() lo hace 10 veces
+
+    b. Luego utilizamos el método hashSync para crear la encriptación, mandamos el string que sería la contraseña
+    y luego definimos como segundo valor cuantas veces va a pasar por el algoritmo.
+    Una vez hecho esto, este valor que dice hash sería nuestra contraseña encriptada.
+
+    c. Copiamos las variables y las introducimos en el código de usuariosControllers, petición post.
+    Donde dice B4c0/\/ iria password
+
+    d. Como último paso antes de guardar la contraseña tenemos que decir que ya no es password,
+    sino que es hash. Cómo hacemos eso? 
+    Usuario es simplemente un objeto de js por lo que podemos decirle que password va a ser hash.
+    usuario.password = hash;
+
+    e. Lo probamos, guardamos cambios, vemos que esté andando el servidor.
+    Vamos a compass y borramos el usuario que aparece.
+    Vamos a postman y le damos send
+
+
+----
+
+2. Validación de datos
+
+Qué pasa si le mando los datos y no envío nombre? o algún campo obligatorio.
+(Probar en postman)
+Tenemos un problema porque se rompe todo
+
+Vamos a utilizar la librería express-validator
+https://www.npmjs.com/package/express-validator
+https://express-validator.github.io/docs
+
+Express validator es una herramienta de express, sería un middleware
+Qué eran los middlewares? son funciones que están entre lo que mande el usuario y lo que devuelve el servidor
+En este caso, si nos falta un dato requerido este middleware va a recibir este dato, lo valida Primero
+y si hay algún problema devuelve inmediatamente el mensaje, no pasa al backend.
+La información solo tiene que llegar al backend si está correctamente validada.
+
+- Lo instalamos:
+    npm install --save express-validator
+
+- Dónde hacemos las validaciones?
+    Tienen que suceder antes de la petición post, es decir que enviemos los datos.
+    Por lo que las validaciones se hacen en el archivo de las rutas
+
+- Importamos la herramienta check de express-validator en routes/usuarios
+
+- Pasamos a ver qué datos son requeridos y que el modelo tiene que validar en models/usuarios
+    . nombre, rol, password y correo son requeridos
+
+- Volvemos a las rutas
+    a. entre la direccion '/' y el controlador usersPost, podemos agregar un dato más
+    Estos datos son los middlewares.
+
+    b. Colocamos estas validaciones dentro de un arreglo, para estas validaciones utilizamos el método check()
+    El método check() recibe dos valores: los campos a validar y el mensaje de error que va a recibir el frontend 
+    Luego de esto y de cerrar el paréntesis, podemos acceder a una serie de métodos. Si yo quiero decir que el nombre 
+    no tiene que ser vacío hay un método que se llama notEmpty()
+
+    c. Si probamos en postman se sigue rompiendo, pero por que? 
+    Porque nunca le dijimos que evalue los resultados de los check.
+    
+    d. Cómo evaluamos los checks?
+    En el controlador dentro del post
+    Importamos la herramienta validationResult de express-validator
+
+    e. Creamos la constante error en el post
+    De donde obtenemos los resultados? de la request del usuario que mandó
+    En errors se van a guardar todas aquellas request que reciban un error, es como
+    si fueramos a recibir un arreglo con errores
+
+    f. hacemos el if
+
+    g. Probamos en postman sin nombre a ver que devuelve y devuelve que falta el nombre
+    Si vamos a la terminal tampoco se rompió porque no llego a mandarlo a la base de datos
+
+
+-----
+
+    3. Como optizar el codigo
+
+    En lo que hicimos estamos validando solamente en la petición check
+    pero también tenemos que hacer validación en el put, en el delete, también se puede hacer en el get
+    y sería poco eficiente poner el código en cada una de las peticiones
+
+    Qué vamos a hacer? 
+    Vamos a crear nuestro propio middleware, es decir un middleware customizable
+
+    - Creamos la carpeta middlewares y un archivo validar_campos.js
+
+    - Necesitamos que nuestro middleware tenga este código
+    //!validar los errores
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(400).json(errors);
+    }
+
+    - Lo copiamos y pegamos en el archivo de validar campos pero para que funcione,
+    necesitamos meterlo en una función
+
+    - Este middleware va a tener una particularidad, tiene la req, la res pero tambien tiene 
+    un metodo mas que se llama next
+
+    - Importamos el validationResult
+
+    - Seguimos los pasos del archivo validar campos
+
+    - Donde llamamos a la funcion validarCampos? Va despues de los check en las rutas
+
+   - Importamos a la funcion validar campos en la ruta 
+
+   Una vez que termina de hacer todos los check se ejecuta la funcion validarCampos
+   Esta funcion verifica los errores y si no hay errores continua(next)
+   Con qué continua? con el controlador (usersPost)
+
+   - Hacemos pruebas en postman con usuarios test mal y luego corregidos

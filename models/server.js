@@ -1,6 +1,7 @@
 //Importamos express
 const express = require('express')
-const cors = require('cors')
+const cors = require('cors');
+const { dbConnection } = require('../database/config');
 
 //Creamos una clase server, el constructor va a ser lo que va a construir todo lo que necesito
 //para que el servidor funcione
@@ -10,10 +11,19 @@ class Server{
         this.app = express();
         this.port = process.env.PORT;
         this.usersPath = '/api/usuarios';
+
+        //conectar con base de datos
+        this.conectarDB();
+
         //si al instanciar la clase queremos que se levante la funcion routes tenemos que llamarla desde el constructor
         this.middlewares();
         this.routes();
     }
+
+    async conectarDB(){
+        await dbConnection();
+    }
+
     middlewares(){
 
         //CORS
