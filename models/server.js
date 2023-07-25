@@ -12,7 +12,7 @@ class Server {
         this.usuariosPath = "/"
         this.middlewares()
         this.routes();
-        this.conectarDB
+        this.conectarDB()
     }
     async conectarDB(){
         await dbConection();
