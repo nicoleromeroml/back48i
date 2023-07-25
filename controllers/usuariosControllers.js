@@ -1,4 +1,6 @@
 const express = require('express')
+const bcrypt = require('bcryptjs');
+const {validationResult} = require('express-validator')
 const { respose, request } = require('express')
 const Usuario = require("../models/usuario")
 
@@ -9,6 +11,13 @@ const usuariosGet = (req = request, res = respose) => {
     
 }
 const usuariosPost = async (req = request, res = respose) => {
+//! validar datos
+// const errors = validationResult(req);
+// if(!errors.isEmpty()){
+//     return res.status(400).json(errors);
+// }
+
+
         // const body = req.body;
         const datos = req.body;
         const {nombre, correo, password, rol} = datos;
@@ -23,6 +32,10 @@ if (existeEmail){
 }
 
 //encriptacion
+const salt = bcrypt.genSaltSync(10);
+const hash = bcrypt.hashSync(password, salt);
+
+usuario.password = hash;
 
 //guardar en la BD
 await usuario.save()
