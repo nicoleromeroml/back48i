@@ -1,21 +1,14 @@
-//Importamos express
 const express = require('express')
 const cors = require('cors');
 const { dbConnection } = require('../database/config');
-
-//Creamos una clase server, el constructor va a ser lo que va a construir todo lo que necesito
-//para que el servidor funcione
 class Server{
     constructor(){
-        //en vez de hacer la constante con app la traemos con el constructor
         this.app = express();
         this.port = process.env.PORT;
         this.usersPath = '/api/usuarios';
 
         //conectar con base de datos
         this.conectarDB();
-
-        //si al instanciar la clase queremos que se levante la funcion routes tenemos que llamarla desde el constructor
         this.middlewares();
         this.routes();
     }
@@ -33,7 +26,6 @@ class Server{
         this.app.use(express.json());
 
         //carpeta publica donde vamos a montar nuestras paginas web
-        //si hacemos que la ruta principal no sea la raiz, public nos deberia redirigir a esa (acceso denegado)
        this.app.use(express.static('public'));
     }
 
@@ -42,16 +34,10 @@ class Server{
     routes(){
 
         this.app.use(this.usersPath, require ('../routes/usuarios'));
-
-        // //!como no tengo la variable app la tengo que llamar con this 
-        // this.app.get('/api/users', function (req, res) {
-        //     res.send('Alo alo alo') 
-        //   })
     }
 
     //para escuchar el puerto creamos otra funcion
     listen(){
-        //le ponemos una segunda variable, una funcion que nos devuelva un mensaje en consola
         this.app.listen(this.port, () => {
             console.log('Server online port:', this.port);
 

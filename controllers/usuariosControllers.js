@@ -3,14 +3,28 @@ const {validationResult} = require('express-validator')
 const bcrypt = require('bcryptjs'); //Importar librería para encriptar contraseña
 const Usuario = require ('../models/usuarios');
 
-const usersGet = (req = request, res = response) =>{
+const usersGet = async (req = request, res = response) =>{
 
-    const {apiKey, limit} = req.query;
+    const {desde, limite} = req.query;
+    const query = {estado:true};
+
+    // const {apiKey, limit} = req.query;
+    // const usuarios = await Usuario.find().skip(desde).limit(limite);
+
+    // const total = await Usuario.countDocuments();
+
+    const [usuarios, total] = await Promise.all([
+        Usuario.find(query).skip(desde).limit(limite),
+        Usuario.countDocuments(query),
+    ])
 
     res.json({
-        message: "Get users",
-        apiKey,
-        limit
+        total,
+        usuarios
+    
+        // message: "Get users",
+        // apiKey,
+        // limit
     })
 }
 
@@ -20,14 +34,10 @@ const usersPost = async (req = request, res = response) =>{
     // if(!errors.isEmpty()){
     //     return res.status(400).json(errors);
     // }
-    //*Si error no está vacío quiere decir que no hay errores, entonces hay que detener el proceso
-    //* devolvemos la respuesta con un status 400 y que devuelva en un json los errores
-
-
+ 
+    //!recibir el cuerpo de la peticion
     const datos = req.body;
-
     const {nombre, correo, password, rol} = datos;
-
     const usuario = new Usuario({nombre, correo, password, rol});
 
     //!verificar el correo
@@ -37,10 +47,6 @@ const usersPost = async (req = request, res = response) =>{
             msg:"El correo ya existe"
         });
     }
-    //*Si nos devolvió algún dato con ese correo entonces hacemos un return(corta el proceso)
-    //*Si existe un correo como el que el usuario intenta guardar entonces está mal, el usuario ya existe
-    //*Como es un error del usuario el servidor le tiene que devolver un mensaje con status
-
 
     //!encriptar la contraseña
     const salt = bcrypt.genSaltSync(10);
@@ -57,16 +63,47 @@ const usersPost = async (req = request, res = response) =>{
     });
 }
 
-const usersPut = (req = request, res = response) =>{
+const usersPut = async (req = request, res = response) =>{
+
+    //Traemos el id
+    const {id} = req.params;
+
+    //Obtener los datos a actualizar
+    const {password, correo, ...resto} = req.body;
+
+    //Si actualizo la password debemo encriptarla
+    if(password){
+        const salt = bcrypt.genSaltSync(10);
+        resto.password = bcrypt.hashSync(password, salt);
+    }
+    
+    //Buscar el usuario y actualizarlo
+    const usuario = await Usuario.findByIdAndUpdate(id, resto, {new:true});
+
     res.json({
         message: "Put users",
+        usuario,
     })
 }
 
-const usersDelete = (req = request, res = response) =>{
+const usersDelete = async(req = request, res = response) =>{
+    const {id} = req.params;
+
+    // const usarioBorrado = await Usuario.findByIdAndDelete(id);
+    // const usuario = await Usuario.findById(id);
+    // if(!usuario.estado){
+    //     return res.json({
+    //         msg: "El usuario ya está inactivo"
+    //     })
+    // }
+
+    const usuarioInactivado = await Usuario.findByIdAndUpdate(id, {estado:false}, {new:true});
+
     res.json({
-        message: "Delete users",
-    })
+        message: "Usuario Inactivo",
+        // usarioBorrado
+        usuarioInactivado
+        })
 }
 
 module.exports = {usersGet, usersPost, usersPut, usersDelete};
