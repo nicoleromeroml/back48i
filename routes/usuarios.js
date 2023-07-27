@@ -8,7 +8,7 @@ const router = Router();
 
  
 
-router.get('/api/usuarios', usuariosGet )
+router.get('/api/usuarios', usuariosGet );
 
 
   router.post('/api/usuarios',[
@@ -22,6 +22,8 @@ router.get('/api/usuarios', usuariosGet )
   
 
   router.delete('/api/usuarios/:id', usuariosDelete);
+
+  router.put('/api/usuarios/:id', usuariosUpdate);
 
 
   module.exports=router;
