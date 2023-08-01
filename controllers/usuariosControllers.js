@@ -66,12 +66,13 @@ const usersPost = async (req = request, res = response) =>{
 const usersPut = async (req = request, res = response) =>{
 
     //Traemos el id
-    const {id} = req.params;
+    const id = req.params.id;
+    console.log(id)
 
     //Obtener los datos a actualizar
     const {password, correo, ...resto} = req.body;
 
-    //Si actualizo la password debemo encriptarla
+    //Si actualizo la password debemos encriptarla
     if(password){
         const salt = bcrypt.genSaltSync(10);
         resto.password = bcrypt.hashSync(password, salt);

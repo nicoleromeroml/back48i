@@ -22,7 +22,12 @@ router.post('/',
 , usersPost);
 
 
-router.put('/:id', usersPut);
+router.put('/:id',[
+    check("id", "No es un ID válido").isMongoId(),
+    check("rol").custom(esRolValido),
+    check("id").custom(usuarioExiste),
+    validarCampos
+], usersPut);
 
 router.delete('/:id',[
     check("id", "No es un ID válido").isMongoId(),
