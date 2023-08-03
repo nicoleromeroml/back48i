@@ -90,6 +90,8 @@ const usersPut = async (req = request, res = response) =>{
 const usersDelete = async(req = request, res = response) =>{
     const {id} = req.params;
 
+    const usuarioAutenticado = req.usuario;
+
     // const usarioBorrado = await Usuario.findByIdAndDelete(id);
     // const usuario = await Usuario.findById(id);
     // if(!usuario.estado){
@@ -103,7 +105,8 @@ const usersDelete = async(req = request, res = response) =>{
     res.json({
         message: "Usuario Inactivo",
         // usarioBorrado
-        usuarioInactivado
+        usuarioInactivado,
+        usuarioAutenticado
         })
 }
 
