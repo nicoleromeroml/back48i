@@ -7,6 +7,7 @@ class Server{
         this.port = process.env.PORT;
         this.authPath = '/api/auth'
         this.usersPath = '/api/usuarios';
+        this.categoriasPath = "/api/categorias";
         //conectar con base de datos
         this.conectarDB();
         this.middlewares();
@@ -34,6 +35,7 @@ class Server{
     routes(){
         this.app.use(this.authPath, require('../routes/auth'));
         this.app.use(this.usersPath, require ('../routes/usuarios'));
+        this.app.use(this.categoriasPath, require('../routes/categorias'));
     }
 
     //para escuchar el puerto creamos otra funcion
