@@ -8,8 +8,8 @@ class Server{
         this.authPath = '/api/auth'
         this.usersPath = '/api/usuarios';
         this.categoriasPath = "/api/categorias";
-        this.cursosPath = "/api/cursos";
-        
+        this.cursosPath = "/api/cursos";   
+        this.buscarPath = "/api/buscar";   
 
         //conectar con base de datos
         this.conectarDB();
@@ -40,6 +40,7 @@ class Server{
         this.app.use(this.usersPath, require ('../routes/usuarios'));
         this.app.use(this.categoriasPath, require('../routes/categorias'));
         this.app.use(this.cursosPath, require('../routes/cursos'));
+        this.app.use(this.buscarPath, require('../routes/buscar'));
 
     }
 
