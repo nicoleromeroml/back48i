@@ -8,6 +8,9 @@ class Server{
         this.authPath = '/api/auth'
         this.usersPath = '/api/usuarios';
         this.categoriasPath = "/api/categorias";
+        this.cursosPath = "/api/cursos";
+        
+
         //conectar con base de datos
         this.conectarDB();
         this.middlewares();
@@ -36,6 +39,8 @@ class Server{
         this.app.use(this.authPath, require('../routes/auth'));
         this.app.use(this.usersPath, require ('../routes/usuarios'));
         this.app.use(this.categoriasPath, require('../routes/categorias'));
+        this.app.use(this.cursosPath, require('../routes/cursos'));
+
     }
 
     //para escuchar el puerto creamos otra funcion
